@@ -814,6 +814,17 @@
 ;;;   "undoes" add-top
 (define remove-top
   (lambda (sexp)
+    (if (and (pair? sexp)
+             (eq? (car sexp) '*TOP*)
+             (pair? (cdr sexp)))
+        ; Special case: We removed the top-level tag, giving us a list
+        (if (not (null? (cddr sexp)))
+            (cons 'DUMMY (cdr sexp))
+            (cadr sexp))
+        sexp)))
+
+(define remove-top-old
+  (lambda (sexp)
     (if (and (pair? sexp) (eq? (car sexp) '*TOP*))
         (if (and (pair? (cdr sexp)) (string? (cadr sexp)))
             (cadr sexp)
